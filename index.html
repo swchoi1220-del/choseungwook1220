@@ -1,78 +1,523 @@
-<IDOCTYPE html>
-  <html lang="ko">
-    <head>
-      <meta charset="UTF-8">
-      <title>시간표와 미디어</title>
-    </head>
-    <body>
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>앱 디렉토리 대시보드 - App Hub Launchpad</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts (Noto Sans KR) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #2D3748; /* 회색 배경 (Slate Dark Gray) */
+        }
 
-      <h1>나의 시간표</h1>
+        /* 앱 아이콘 영역: 노란색 배경 */
+        .app-icon-yellow {
+            background-color: #FACC15; /* Bright Yellow */
+            color: #1E293B;
+            box-shadow: 0 4px 10px rgba(250, 204, 21, 0.3);
+        }
 
-      <table border="1">
-        <tr>
-          <th>교시</th>
-          <th>월</th>
-          <th>화</th>
-          <th>수</th>
-          <th>목</th>
-          <th>금</th>
-        </tr>
-        <tr>
-          <td>1</td>
-          <td>국사2</td>
-          <td>진로</td>
-          <td>대수</td>
-          <td>문학</td>
-          <td>국사2</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>문학</td>
-          <td>문학</td>
-          <td>국사</td>
-          <td>대수</td>
-          <td>중국</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td>스포</td>
-          <td>빅분</td>
-          <td>빅분</td>
-          <td>응화</td>
-          <td>문학</td>
-        <tr>
-          <td>4</td>
-          <td>중국</td>
-          <td>빅분</td>
-          <td>빅분</td>
-          <td>응화</td>
-          <td>대수</td>
-        </tr>
-        <tr>
-          <td>5</td>
-          <td>응화</td>
-          <td>사회</td>
-          <td>스포</td>
-          <td>스포</td>
-          <td>창체</td>
-        </tr>
-        <tr>
-          <td>6</td>
-          <td>응화</td>
-          <td>대수</td>
-          <td>사회</td>
-          <td>중국</td>
-          <td>창체</td>
-        </tr>
-        <tr>
-          <td>7</td>
-          <td></td>
-          <td>중국</td>
-          <td></td>
-          <td>사회</td>
-          <td></td>
-          <h1>동영상</h1>
-          <audio src="sample.mp3" controls>
-          </audio>
-        </body>
-  </html>
+        /* 설명글 칸: 사각형 노란색 영역 */
+        .app-desc-yellow-rect {
+            background-color: #FEF08A; /* Soft Yellow */
+            border: 2px solid #EAB308; /* Strong Yellow Border */
+            border-radius: 4px; /* Strict rectangular appearance with sharp edges */
+            color: #1E293B;
+        }
+
+        /* Hover Interaction Effects */
+        .card-hover {
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 25px -5px rgba(0, 0, 0, 0.4), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #1E293B;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #EAB308;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-100 flex flex-col selection:bg-yellow-400 selection:text-slate-900">
+
+    <!-- Top Header Navigation Bar -->
+    <header class="bg-slate-900 border-b border-slate-700 py-4 px-4 sm:px-8 sticky top-0 z-30 shadow-xl">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <!-- Logo & Title -->
+            <div class="flex items-center gap-3 w-full md:w-auto justify-between md:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-lg app-icon-yellow flex items-center justify-center font-black text-xl shadow">
+                        <i class="fa-solid fa-shapes"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-bold tracking-tight text-white flex items-center gap-2">
+                            App Hub <span class="text-xs px-2 py-0.5 rounded bg-yellow-400 text-slate-900 font-extrabold">v2.0</span>
+                        </h1>
+                        <p class="text-xs text-slate-400">자주 방문하는 웹 앱 디렉토리 및 검색</p>
+                    </div>
+                </div>
+
+                <!-- Mobile Add Button -->
+                <button onclick="openModal()" class="md:hidden bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-3 py-2 rounded-lg text-xs flex items-center gap-1">
+                    <i class="fa-solid fa-plus"></i> 추가
+                </button>
+            </div>
+            
+            <!-- Search & Filter Controls -->
+            <div class="flex items-center gap-3 w-full md:w-auto">
+                <div class="relative flex-1 md:w-80">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm"></i>
+                    <input type="text" id="searchInput" oninput="filterApps()" placeholder="사이트 이름 또는 설명 검색..." 
+                           class="w-full bg-slate-800 text-slate-100 text-sm rounded-lg pl-9 pr-8 py-2.5 border border-slate-700 focus:outline-none focus:border-yellow-400 focus:ring-1 focus:ring-yellow-400 transition-all placeholder:text-slate-500">
+                    <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200">
+                        <i class="fa-solid fa-circle-xmark"></i>
+                    </button>
+                </div>
+
+                <!-- Desktop Add App Button -->
+                <button onclick="openModal()" class="hidden md:flex bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-2.5 rounded-lg text-sm items-center gap-2 transition-all shadow-md active:scale-95 whitespace-nowrap">
+                    <i class="fa-solid fa-plus"></i> 앱 카드 추가
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+        
+        <!-- Welcome & Info Banner -->
+        <div class="mb-8 p-5 bg-slate-800/90 rounded-xl border border-slate-700 shadow-md flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div class="flex items-center gap-4">
+                <div class="hidden sm:flex w-12 h-12 rounded-full bg-yellow-400/10 border border-yellow-400/30 items-center justify-center text-yellow-400 text-xl shrink-0">
+                    <i class="fa-solid fa-compass"></i>
+                </div>
+                <div>
+                    <h2 class="text-base font-bold text-yellow-400 flex items-center gap-2">
+                        🚀 빠른 웹 앱 디렉토리
+                    </h2>
+                    <p class="text-xs sm:text-sm text-slate-300 mt-1">
+                        원하는 사이트 이름을 상단 검색창에 입력하면 즉시 검색되며, 클릭하여 바로 접속할 수 있습니다.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Stat Counters -->
+            <div class="flex items-center gap-2 self-end md:self-center">
+                <span id="appCountBadge" class="inline-flex items-center gap-2 px-3 py-1.5 bg-yellow-400/10 border border-yellow-400/30 text-yellow-300 text-xs font-semibold rounded-full">
+                    <span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span>
+                    총 7개 사이트
+                </span>
+            </div>
+        </div>
+
+        <!-- Empty Result Message (Hidden by default) -->
+        <div id="noResults" class="hidden text-center py-16 bg-slate-800/50 rounded-2xl border border-dashed border-slate-700 my-4">
+            <div class="w-16 h-16 mx-auto mb-4 rounded-full bg-slate-700 flex items-center justify-center text-slate-400 text-2xl">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+            <h3 class="text-lg font-bold text-slate-200">검색 결과가 없습니다</h3>
+            <p class="text-sm text-slate-400 mt-1 max-w-md mx-auto">입력하신 사이트가 등록되어 있지 않습니다. 새로운 앱 카드로 직접 추가해보세요!</p>
+            <button onclick="openModalWithSearchQuery()" class="mt-4 bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-4 py-2 rounded-lg text-sm inline-flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> 입력한 이름으로 앱 추가하기
+            </button>
+        </div>
+
+        <!-- Apps Grid Layout -->
+        <div id="appsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- App Cards will be dynamically generated by JS -->
+        </div>
+
+    </main>
+
+    <!-- Modal for Adding New App -->
+    <div id="addModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-800 border border-slate-700 rounded-2xl max-w-md w-full p-6 shadow-2xl transform transition-all">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-4 mb-4">
+                <h3 class="text-lg font-bold text-yellow-400 flex items-center gap-2">
+                    <i class="fa-solid fa-circle-plus"></i> 새 웹 앱 카드 추가
+                </h3>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <form id="addAppForm" onsubmit="handleAddApp(event)" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">앱/사이트 이름 *</label>
+                    <input type="text" id="newAppName" required placeholder="예: 네이버, 깃허브" 
+                           class="w-full bg-slate-900 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-yellow-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">접속 URL 주소 *</label>
+                    <input type="url" id="newAppUrl" required placeholder="https://www.example.com" 
+                           class="w-full bg-slate-900 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-yellow-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">카테고리</label>
+                    <input type="text" id="newAppCategory" placeholder="예: 포털, 게임, 스트리밍" 
+                           class="w-full bg-slate-900 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-yellow-400">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">아이콘 선택</label>
+                    <select id="newAppIcon" class="w-full bg-slate-900 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-yellow-400">
+                        <option value="fa-solid fa-globe">🌐 기본 글로벌 웹사이트</option>
+                        <option value="fa-brands fa-google">🔍 Google 스타일</option>
+                        <option value="fa-solid fa-N">🇳 NAVER 스타일</option>
+                        <option value="fa-brands fa-youtube">▶️ YouTube 스타일</option>
+                        <option value="fa-solid fa-gamepad">🎮 게임 스타일</option>
+                        <option value="fa-solid fa-code">💻 개발 / IT</option>
+                        <option value="fa-solid fa-comments">💬 커뮤니티 / SNS</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-300 uppercase mb-1">사이트 설명 (사각형 노란색 상자에 표시됨) *</label>
+                    <textarea id="newAppDesc" rows="3" required placeholder="사이트에 대한 짧은 설명을 작성해 주세요." 
+                              class="w-full bg-slate-900 text-white rounded-lg px-3 py-2 text-sm border border-slate-700 focus:outline-none focus:border-yellow-400 resize-none"></textarea>
+                </div>
+
+                <div class="flex items-center justify-end gap-3 pt-3 border-t border-slate-700">
+                    <button type="button" onclick="closeModal()" class="px-4 py-2 rounded-lg bg-slate-700 hover:bg-slate-600 text-slate-200 text-xs font-bold">
+                        취소
+                    </button>
+                    <button type="submit" class="px-4 py-2 rounded-lg bg-yellow-400 hover:bg-yellow-300 text-slate-900 text-xs font-bold shadow">
+                        등록하기
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification Toast Box -->
+    <div id="toast" class="fixed bottom-5 right-5 bg-slate-900 text-white px-4 py-3 rounded-lg shadow-2xl border border-yellow-400/50 flex items-center gap-3 transform translate-y-20 opacity-0 transition-all z-50 pointer-events-none">
+        <i id="toastIcon" class="fa-solid fa-circle-check text-yellow-400"></i>
+        <span id="toastMsg" class="text-sm font-medium">알림 메시지</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 border-t border-slate-800 py-6 px-6 text-center text-xs text-slate-500 mt-auto">
+        <p>© 2026 App Launch Hub. Google, YouTube, PokeRogue & Custom Apps Launcher.</p>
+    </footer>
+
+    <script>
+        // Default Core Initial Web Application Data
+        const defaultApps = [
+            {
+                id: 'google',
+                name: '구글 (Google)',
+                url: 'https://www.google.com/?hl=ko',
+                category: '검색엔진 / 포털',
+                iconClass: 'fa-brands fa-google',
+                description: '전 세계의 모든 정보를 검색할 수 있는 세계 대표 포털 검색엔진 서비스입니다.'
+            },
+            {
+                id: 'youtube',
+                name: '유튜브 (YouTube)',
+                url: 'https://www.youtube.com/?app=desktop&hl=ko&gl=KR',
+                category: '동영상 스트리밍',
+                iconClass: 'fa-brands fa-youtube',
+                description: '다양한 영상을 시청하고 라이브 방송 및 콘텐츠를 공유하는 세계 최대의 영상 플랫폼입니다.'
+            },
+            {
+                id: 'pokerogue',
+                name: '포켓로그 (PokeRogue)',
+                url: 'https://pokerogue.net/',
+                category: '웹 기반 게임',
+                iconClass: 'fa-solid fa-gamepad',
+                description: '포켓몬스터 세계관 기반의 브라우저 전용 웹 로그라이크(Roguelike) 팬 게임 서비스입니다.'
+            },
+            {
+                id: 'naver',
+                name: '네이버 (NAVER)',
+                url: 'https://www.naver.com/',
+                category: '검색엔진 / 포털',
+                iconClass: 'fa-solid fa-N',
+                description: '대한민국의 대표적인 종합 검색 포털 서비스로 뉴스, 블로그, 쇼핑 등의 다양한 콘텐츠를 제공합니다.'
+            },
+            {
+                id: 'naver_webtoon',
+                name: '네이버 웹툰',
+                url: 'https://comic.naver.com/index',
+                category: '웹툰 / 엔터테인먼트',
+                iconClass: 'fa-solid fa-book-open',
+                description: '매일 업데이트되는 인기 요일별 웹툰, 웹소설 및 만화 콘텐츠를 감상할 수 있는 대표 서비스입니다.'
+            },
+            {
+                id: 'naver_sports',
+                name: '네이버 스포츠',
+                url: 'https://m.sports.naver.com/index',
+                category: '스포츠 / 생중계',
+                iconClass: 'fa-solid fa-futbol',
+                description: '국내외 주요 스포츠 경기 생중계, 하이라이트 영상, 뉴스 및 최신 경기 스코어 정보를 제공합니다.'
+            },
+            {
+                id: 'naver_dict',
+                name: '네이버 사전',
+                url: 'https://dict.naver.com/',
+                category: '학습 / 사전',
+                iconClass: 'fa-solid fa-language',
+                description: '국어, 영어, 일본어, 중국어 등 다양한 언어의 단어 뜻 풀이와 실시간 번역 서비스를 제공합니다.'
+            }
+        ];
+
+        // Global State
+        let apps = [];
+
+        // Load Apps from LocalStorage or Fallback to Defaults
+        function loadApps() {
+            try {
+                const stored = localStorage.getItem('app_hub_items');
+                if (stored) {
+                    const existingApps = JSON.parse(stored);
+                    // Add newly introduced default apps if missing from existing saved data
+                    defaultApps.forEach(defApp => {
+                        if (!existingApps.some(app => app.id === defApp.id)) {
+                            existingApps.push(defApp);
+                        }
+                    });
+                    apps = existingApps;
+                    saveApps();
+                } else {
+                    apps = [...defaultApps];
+                    saveApps();
+                }
+            } catch (e) {
+                console.error("Localstorage load error:", e);
+                apps = [...defaultApps];
+            }
+        }
+
+        // Save Apps state to LocalStorage
+        function saveApps() {
+            try {
+                localStorage.setItem('app_hub_items', JSON.stringify(apps));
+            } catch (e) {
+                console.error("Localstorage save error:", e);
+            }
+        }
+
+        // Render App Cards based on filter
+        function renderApps(itemsToRender = apps) {
+            const grid = document.getElementById('appsGrid');
+            const noResults = document.getElementById('noResults');
+            const appCountBadge = document.getElementById('appCountBadge');
+
+            grid.innerHTML = '';
+
+            // Update badge text
+            appCountBadge.innerHTML = `<span class="w-2 h-2 rounded-full bg-yellow-400 animate-pulse"></span> 총 ${itemsToRender.length}개 사이트`;
+
+            if (itemsToRender.length === 0) {
+                noResults.classList.remove('hidden');
+            } else {
+                noResults.classList.add('hidden');
+                
+                itemsToRender.forEach(app => {
+                    const card = document.createElement('div');
+                    card.className = 'bg-slate-800 border border-slate-700/80 rounded-xl p-5 flex flex-col justify-between card-hover shadow-lg relative group';
+                    
+                    card.innerHTML = `
+                        <div>
+                            <!-- Card Header: App Icon & Name -->
+                            <div class="flex items-start justify-between gap-3 mb-4">
+                                <div class="flex items-center gap-3">
+                                    <!-- 요구사항: 노란색 배경 앱 아이콘 영역 -->
+                                    <div class="w-12 h-12 rounded-xl app-icon-yellow flex items-center justify-center text-2xl font-black shrink-0">
+                                        <i class="${app.iconClass}"></i>
+                                    </div>
+                                    <div>
+                                        <h3 class="text-base font-bold text-white group-hover:text-yellow-400 transition-colors">
+                                            ${escapeHtml(app.name)}
+                                        </h3>
+                                        <span class="inline-block text-[11px] px-2 py-0.5 rounded bg-slate-700 text-slate-300 mt-0.5 font-medium">
+                                            ${escapeHtml(app.category || '웹 서비스')}
+                                        </span>
+                                    </div>
+                                </div>
+                                
+                                ${isDefaultApp(app.id) ? '' : `
+                                    <button onclick="deleteApp('${app.id}')" title="삭제" class="text-slate-500 hover:text-red-400 p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                                        <i class="fa-solid fa-trash-can text-sm"></i>
+                                    </button>
+                                `}
+                            </div>
+
+                            <!-- 요구사항: 사각형이면서 노란색인 설명글 칸 -->
+                            <div class="app-desc-yellow-rect p-3.5 mb-5 shadow-sm">
+                                <p class="text-xs leading-relaxed font-semibold text-slate-900 break-keep">
+                                    ${escapeHtml(app.description)}
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Card Action: Open Link Button -->
+                        <div class="pt-2 border-t border-slate-700/60 flex items-center justify-between">
+                            <span class="text-[11px] text-slate-400 truncate max-w-[180px]">
+                                ${escapeHtml(app.url)}
+                            </span>
+                            <a href="${app.url}" target="_blank" rel="noopener noreferrer" 
+                               class="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold px-3.5 py-1.5 rounded text-xs flex items-center gap-1.5 transition-colors shadow">
+                                <span>방문하기</span>
+                                <i class="fa-solid fa-arrow-up-right-from-square text-[10px]"></i>
+                            </a>
+                        </div>
+                    `;
+                    grid.appendChild(card);
+                });
+            }
+        }
+
+        // Check if app is default
+        function isDefaultApp(id) {
+            return ['google', 'youtube', 'pokerogue', 'naver', 'naver_webtoon', 'naver_sports', 'naver_dict'].includes(id);
+        }
+
+        // Real-time Search / Filter System
+        function filterApps() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            const clearBtn = document.getElementById('clearSearchBtn');
+
+            if (query.length > 0) {
+                clearBtn.classList.remove('hidden');
+            } else {
+                clearBtn.classList.add('hidden');
+            }
+
+            const filtered = apps.filter(app => {
+                const nameMatch = app.name.toLowerCase().includes(query);
+                const descMatch = app.description.toLowerCase().includes(query);
+                const categoryMatch = (app.category || '').toLowerCase().includes(query);
+                return nameMatch || descMatch || categoryMatch;
+            });
+
+            renderApps(filtered);
+        }
+
+        // Clear Search Box
+        function clearSearch() {
+            const input = document.getElementById('searchInput');
+            input.value = '';
+            filterApps();
+            input.focus();
+        }
+
+        // Modal Handlers
+        function openModal() {
+            document.getElementById('addModal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('addModal').classList.add('hidden');
+            document.getElementById('addAppForm').reset();
+        }
+
+        function openModalWithSearchQuery() {
+            const query = document.getElementById('searchInput').value.trim();
+            openModal();
+            if (query) {
+                document.getElementById('newAppName').value = query;
+                document.getElementById('newAppDesc').value = `${query} 서비스로 이동할 수 있는 바로가기 앱입니다.`;
+            }
+        }
+
+        // Handle Add New App Submit
+        function handleAddApp(event) {
+            event.preventDefault();
+
+            const name = document.getElementById('newAppName').value.trim();
+            let url = document.getElementById('newAppUrl').value.trim();
+            const category = document.getElementById('newAppCategory').value.trim() || '사용자 추가';
+            const iconClass = document.getElementById('newAppIcon').value;
+            const description = document.getElementById('newAppDesc').value.trim();
+
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+
+            const newApp = {
+                id: 'custom_' + Date.now(),
+                name: name,
+                url: url,
+                category: category,
+                iconClass: iconClass,
+                description: description
+            };
+
+            apps.unshift(newApp);
+            saveApps();
+            
+            closeModal();
+            clearSearch();
+            showToast(`'${name}' 앱 카드가 성공적으로 추가되었습니다!`);
+        }
+
+        // Delete Custom App
+        function deleteApp(id) {
+            const app = apps.find(a => a.id === id);
+            if (!app) return;
+
+            apps = apps.filter(a => a.id !== id);
+            saveApps();
+            filterApps();
+            showToast(`'${app.name}' 앱 카드가 삭제되었습니다.`);
+        }
+
+        // Helper: Toast Message
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toastMsg');
+            
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            toast.classList.add('translate-y-0', 'opacity-100');
+
+            setTimeout(() => {
+                toast.classList.remove('translate-y-0', 'opacity-100');
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3000);
+        }
+
+        // Helper: Utility to prevent XSS
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        // Initialize on window load
+        window.onload = function() {
+            loadApps();
+            renderApps();
+        };
+    </script>
+</body>
+</html>
